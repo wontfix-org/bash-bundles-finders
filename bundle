@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+SEARCH_EXCLUDES=(\
+	-not -path "*/debian/*" \
+	-not -path "*/build/*" \
+	-not -path "*.svn*" \
+	-not -path "*CVS*" \
+	-not -path "*.git*" \
+	-not -name "*.py?" \
+	-not -name ".*.sw?"\
+)
+
+GREP_OPTIONS=(\
+	--color=auto -I\
+)
+
+XAGRS_OPTIONS=()
+
+function gg() {
+	local dir="."
+	if [ -e "$1" ] && [ -n "$2" ] ; then
+		dir=$1
+		shift
+	fi
+
+	find $dir -type f "${SEARCH_EXCLUDES[@]}" -print0 | xargs -0 "${XARGS_OPTIONS[@]}" grep "${GREP_OPTIONS[@]}" "$@"
+}
+
+function ff() {
+	local dir="."
+	if [ -e "$1" ] && [ -n "$2" ] ; then
+		dir=$1
+		shift
+	fi
+	local name=${1:-"*"}
+	shift
+
+	find $dir "${SEARCH_EXCLUDES[@]}" -iname '*'$name'*' "$@" 
+}
+
+
